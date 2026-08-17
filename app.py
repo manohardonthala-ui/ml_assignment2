@@ -27,7 +27,7 @@ warnings.filterwarnings("ignore")
 
 CAT_COLS   = ["Sex", "ChestPainType", "RestingECG", "ExerciseAngina", "ST_Slope"]
 TARGET_COL = "HeartDisease"
-DATA_PATH  = os.path.join(os.path.dirname(__file__), "model", "heart_disease.csv")
+DATA_PATH  = os.path.join(os.path.dirname(os.path.abspath(__file__)), "model", "heart_disease.csv")
 
 MODEL_NAMES = [
     "Logistic Regression",
