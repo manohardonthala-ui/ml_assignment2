@@ -45,6 +45,9 @@ prob = 1 / (1 + np.exp(-logit))
 prob = np.clip(prob + rng.normal(0, 0.05, N), 0.02, 0.98)
 heart_disease = (rng.random(N) < prob).astype(int)
 
+# extra feature: number of major vessels colored by flourosopy (0-3)
+num_vessels = rng.choice([0, 1, 2, 3], N, p=[0.45, 0.28, 0.17, 0.10])
+
 df = pd.DataFrame({
     "Age": age,
     "Sex": sex_vals,
@@ -57,6 +60,7 @@ df = pd.DataFrame({
     "ExerciseAngina": exercise_angina,
     "Oldpeak": oldpeak,
     "ST_Slope": st_slope_vals,
+    "NumVessels": num_vessels,
     "HeartDisease": heart_disease,
 })
 
