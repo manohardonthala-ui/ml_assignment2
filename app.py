@@ -55,8 +55,13 @@ def train_all_models():
         X, y, test_size=0.2, random_state=42, stratify=y
     )
 
+    feature_cols = list(X_train.columns)
+
     scaler = StandardScaler()
-    X_train_s = scaler.fit_transform(X_train)
+    X_train_s = pd.DataFrame(
+        scaler.fit_transform(X_train),
+        columns=feature_cols
+    )
 
     clfs = {
         "Logistic Regression":      LogisticRegression(max_iter=1000, random_state=42),
@@ -73,7 +78,7 @@ def train_all_models():
         clf.fit(Xtr, y_train)
         trained[name] = clf
 
-    return trained, scaler, encoders, needs_scale
+    return trained, scaler, encoders, needs_scale, feature_cols
 
 
 # ── encode uploaded test data ────────────────────────────────────────────────
@@ -100,8 +105,11 @@ def compute_metrics(y_true, y_pred, y_prob) -> dict:
     }
 
 
-def predict(clf, X_enc, scaler, name, needs_scale):
-    Xi = scaler.transform(X_enc) if name in needs_scale else X_enc
+def predict(clf, X_enc, scaler, name, needs_scale, feature_cols):
+    if name in needs_scale:
+        Xi = pd.DataFrame(scaler.transform(X_enc), columns=feature_cols)
+    else:
+        Xi = X_enc[feature_cols]
     y_pred = clf.predict(Xi)
     y_prob = (
         clf.predict_proba(Xi)[:, 1]
@@ -146,7 +154,7 @@ st.divider()
 
 # ── load models ──────────────────────────────────────────────────────────────
 with st.spinner("Training models (first load only — cached after that)…"):
-    trained_models, scaler, encoders, needs_scale = train_all_models()
+    trained_models, scaler, encoders, needs_scale, feature_cols = train_all_models()
 
 # ── sidebar ──────────────────────────────────────────────────────────────────
 with st.sidebar:
@@ -195,7 +203,7 @@ st.divider()
 st.subheader(f"📊  b–d.  Results for: **{selected_model}**")
 
 clf = trained_models[selected_model]
-y_pred, y_prob = predict(clf, X_enc, scaler, selected_model, needs_scale)
+y_pred, y_prob = predict(clf, X_enc, scaler, selected_model, needs_scale, feature_cols)
 metrics = compute_metrics(y_true, y_pred, y_prob)
 
 # ── c. evaluation metrics ─────────────────────────────────────────────────────
@@ -233,7 +241,7 @@ st.subheader("📈  All Models Comparison")
 rows = []
 for name in MODEL_NAMES:
     c = trained_models[name]
-    yp, ypr = predict(c, X_enc, scaler, name, needs_scale)
+    yp, ypr = predict(c, X_enc, scaler, name, needs_scale, feature_cols)
     m = compute_metrics(y_true, yp, ypr)
     m["Model"] = name
     rows.append(m)
