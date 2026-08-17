@@ -145,7 +145,7 @@ st.title("❤️  Heart Disease Classification")
 st.markdown(
     """
 **BITS Pilani ML Assignment** — Binary classification on the Heart Failure Prediction dataset
-*918 rows · 11 features · target: HeartDisease (0 = No Disease, 1 = Heart Disease)*
+*918 rows · 12 features · target: HeartDisease (0 = No Disease, 1 = Heart Disease)*
 
 Upload `test_data.csv` (from the GitHub repo), pick a model, and explore metrics.
 """
@@ -281,4 +281,4 @@ for metric, title_suffix in [("Accuracy", "Accuracy"), ("AUC", "AUC Score")]:
     st.pyplot(fig_b)
 
 st.divider()
-st.caption("Heart Disease Classification · BITS Pilani ML Assignment · Dataset: Heart Failure Prediction (918 rows, 11 features)")
+st.caption("Heart Disease Classification · BITS Pilani ML Assignment · Dataset: Heart Failure Prediction (918 rows, 12 features)")
